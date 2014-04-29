@@ -1,0 +1,175 @@
+local arg = {...}
+
+
+modulePath = core.coreDir() ..'/modules'
+
+modulesConfig = configman.load(core.coreDir()..'/config/modules.config')
+
+
+
+
+local function save()
+	configman.save(core.coreDir()..'/config/modules.config', modulesConfig)
+end
+
+local function loaded(arg, verbose)
+	for i = 1, #modulesConfig.loaded do
+		--print("arg: ".. arg .. " compare: " .. modulesConfig.loaded[i])
+		if arg == modulesConfig.loaded[i] then
+			if verbose == true  then print('+ '.. arg) end
+			return	true		
+		end
+	end
+	if verbose == true then print('~ '.. arg) end
+	return false
+end
+
+function list()
+	list = fs.list(modulePath)
+	for i = 1, #list do
+		if fs.isDir(fs.combine(modulePath ,list[i])) then
+			loaded(list[i], true)
+		end
+	end
+end
+
+function unload(module)
+	path = fs.combine(modulePath ,module)
+	if fs.isDir(path) then
+		for i = 1, #modulesConfig.loaded do
+			if module == modulesConfig.loaded[i] then
+				
+				table.remove(modulesConfig.loaded, i)
+
+				if fs.isDir(fs.combine(path , '/apis')) then
+					shell.run('api', 'unload', '/'..fs.combine(path , '/apis'))
+				end
+		
+				if fs.isDir(fs.combine(path , '/programs')) then
+					shellPath = shell.path();
+					pattern = ':/'.. path .. '/programs'
+					shellPath, t = string.gsub(shellPath, pattern,"")
+					shell.setPath(shellPath)
+				end
+
+				print('unloaded ' .. module )
+				save()
+				return true			
+			end
+		end
+		
+	end
+	print('could not unloaded ' .. module )
+	return false
+end
+
+function load(module)
+	path = fs.combine(modulePath ,module)
+	if fs.isDir(path) and loaded(module) == false then
+		table.insert(modulesConfig.loaded, 1, module)
+
+
+		if fs.isDir(fs.combine(path , '/apis')) then
+			shell.run('api', 'load', '/'..fs.combine(path , '/apis'))
+		end
+
+		if fs.isDir(fs.combine(path , '/programs')) then
+			shell.setPath(shell.path() .. ':'.. '/'..fs.combine(path , '/programs'))
+		end
+
+		print ('loaded ' .. module)
+		save()
+		return true
+	end
+	print ('could not load '.. module)
+	return false
+end
+
+function inBoot(module)
+	for i = 1, #modulesConfig.boot do
+			if module == modulesConfig.boot[i] then
+				return true
+			end
+	end
+	return false
+end
+
+function addBoot(module)
+	path = fs.combine(modulePath ,module)
+	if fs.isDir(path) then
+		table.insert(modulesConfig.boot, 1, module)
+		print('added '..module..' to boot')
+		save()
+		return true
+	end
+	return false
+end
+
+function removeBoot(module)
+	for i = 1, #modulesConfig.boot do
+		if module == modulesConfig.boot[i] then
+			table.remove(modulesConfig.boot, i)
+			print('removed '..module..' from boot')
+			save()
+			return true
+		end
+	end
+	return false
+end
+
+function refresh()
+	if modulesConfig ~= nil then
+		config = modulesConfig.boot
+	else
+		config = {}
+	end 
+	modulesConfig = {loaded = {}, boot = config}	
+	save()
+
+	for i = 1, #modulesConfig.boot do
+		load(modulesConfig.boot[i])
+	end
+
+end
+
+function install(...)
+	-- Code here...
+end
+
+function installList(...)
+	-- Code here...
+end
+
+function remove(module)
+	path = fs.combine(modulePath ,module)
+	if fs.isDir(path)then
+		return fs.delete(path)
+	end
+	return false
+end
+
+if arg[1] == nil then
+	print("api <list/refresh>")
+	print("api <load/unload/remove> <module> ")
+	print("api <boot> <module> ")
+elseif arg[1] == "list" then
+	list()
+
+elseif arg[1] == "unload" and arg[2] ~= nil then
+	unload(arg[2])
+elseif arg[1] == "boot" and arg[2] ~= nil then
+	if inBoot(arg[2]) then
+		removeBoot(arg[2])
+	else
+		addBoot(arg[2])
+	end
+elseif arg[1] == "remove" and arg[2] ~= nil then
+	unload(arg[2])
+	remove(arg[2])
+elseif arg[1] == "load" and arg[2] ~= nil then
+	load(arg[2])
+elseif arg[1] == "refresh"  then
+	refresh()
+end
+
+

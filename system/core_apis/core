@@ -1,0 +1,36 @@
+
+
+function coreDir()
+	return  "/core"
+end
+
+function isApi(path)
+
+end
+
+function isProgram(path)
+
+end
+
+
+--[[
+function loadProgram(path, reqursive)
+	if  fs.exists(path) == false  then
+		print('file or path does not exist')	
+		return false
+	end
+
+	if fs.isDir(path) then
+		local table = fs.list(path)
+		for i=1,#table do
+   			if reqursive == true and fs.isDir(table[i]) then
+   				loadProgram(fs.combine(path, table[i]), true)
+   			else
+   				shell.setPath(shell.path() .. ':' fs.combine(path, table[i]) )
+   			end
+		end
+	else 
+		loadApi(path)
+	end
+end
+]]--

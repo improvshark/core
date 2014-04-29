@@ -1,0 +1,19 @@
+function load(path)
+	--print('loading config from: ' .. path)
+	if fs.exists(path) then
+		local file = assert(fs.open(path, "r"))
+		temp = json.decode(file.readAll())
+		file.close()
+		return temp
+	else
+		return {}
+	end 
+end
+
+function save(path, obj)
+	--print('saving config to: ' .. path)
+	local file = assert(fs.open(path,"w"))
+	string = json.encodePretty(obj)
+	file.write(string)
+	file.close()
+end

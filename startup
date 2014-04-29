@@ -1,0 +1,47 @@
+
+
+coreDir = '/core'
+
+print("starting core")
+shell.setDir("/user")
+
+print("loading core programs")
+shell.setPath(shell.path() .. ':'.. coreDir ..'/system/core_programs')
+
+print("loading core apis")
+if shell.run('api', 'load', coreDir ..'/system/core_apis') == false then 
+	print("failed to load apis")
+end
+
+print("loading modules")
+shell.run('module', 'refresh')
+
+
+
+
+
+
+-- loading user crap
+print("loading user config")
+local userConfig = configman.load(core.coreDir()..'/config/user.config')
+
+print("loading user programs")
+shell.setPath(shell.path() .. ':'.. userConfig.programs)
+print("loading user apis")
+if shell.run('api', 'load', userConfig.apis ) == false then 
+	print("failed to load apis")
+end
+
+
+if not daemon.isInstalled() then daemon.install() end
+
+
+-- loading interface
+print("loading user interface")
+if userConfig.interface ~= default then
+	local path = coreDir .."/interface/".. userConfig.interface
+	daemon.add("interface", shell.run(path))
+end
+
+
+--shell.run("/core/system/main")
