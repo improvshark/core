@@ -4,7 +4,7 @@ local arg = {...}
 modulePath = core.coreDir() ..'/modules'
 
 modulesConfig = configman.load(core.coreDir()..'/config/modules.config')
-
+moduleListPath = core.coreDir() .. '/config/moduleList'
 
 
 
@@ -77,6 +77,10 @@ function load(module)
 			shell.setPath(shell.path() .. ':'.. '/'..fs.combine(path , '/programs'))
 		end
 
+		if fs.exists(fs.combine(path , '/startup')) then
+			shell.run(fs.combine(path , '/startup'))
+		end
+
 		print ('loaded ' .. module)
 		save()
 		return true
@@ -132,12 +136,30 @@ function refresh()
 
 end
 
-function install(...)
-	-- Code here...
+function install(name)
+	if name == nil then return false end
+
+	modList = configman.load(moduleListPath)
+	for key, value in pairs(modList) do
+		if name == tostring(key) then
+			currentDir = shell.dir()
+			shell.setDir(modulePath)
+			installPath =  tostring(key)
+			print('install Path: '.. installPath)
+			if shell.run('gitget', value.githubAccount, value.githubName, value.githubBranch, installPath) then
+				return true
+			end
+			shell.setDir(currentDir)
+		end
+	end
+	return false
 end
 
 function installList(...)
-	-- Code here...
+	modList = configman.load(moduleListPath)
+	for key, value in pairs(modList) do
+		print(tostring(key) .. ": " .. string.sub(value.shortDisc,1,22 )) 
+	end
 end
 
 function remove(module)
@@ -152,6 +174,8 @@ if arg[1] == nil then
 	print("api <list/refresh>")
 	print("api <load/unload/remove> <module> ")
 	print("api <boot> <module> ")
+	print("api <install> ")
+	print("api <install/update> <module> ")
 elseif arg[1] == "list" then
 	list()
 
@@ -170,6 +194,14 @@ elseif arg[1] == "load" and arg[2] ~= nil then
 	load(arg[2])
 elseif arg[1] == "refresh"  then
 	refresh()
+elseif arg[1] == "install" and arg[2] == nil then
+	installList()
+elseif (arg[1] == "install" or arg[1] == "update") and arg[2] ~= nil then
+	if not install(arg[2]) then 
+		print('cant find: ' .. arg[2])
+	end
+else
+	print('bad arguments')
 end
 
 

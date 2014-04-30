@@ -1,0 +1,9 @@
+{
+	"turtleTools": {
+		"githubName": "turtleTools",
+		"githubBranch": "master",
+		"githubAccount": "improvshark",
+		"shortDisc": "useful turtle tools",
+		"longDisc": "useful set of tools for turtle location api,fueling, mining, and building"
+	}
+}
