@@ -1,5 +1,11 @@
 -- check for gitget if dont have download gitget
-shell.run('gitget', 'improvshark', 'core', 'master', '/core')
+
+currentDir = shell.dir()
+shell.setDir('/')
+
+shell.run('gitget', 'improvshark', 'core', 'master', 'core')
 shell.run('pastebin', 'get', 'F0HtmrGY', '/startup') 
+
+shell.setDir(currentDir)
 
 
