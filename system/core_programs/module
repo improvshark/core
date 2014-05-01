@@ -41,6 +41,10 @@ function unload(module)
 				
 				table.remove(modulesConfig.loaded, i)
 
+				if fs.exists(fs.combine(path , '/unload')) then
+					shell.run(fs.combine(path , '/unload'))
+				end
+
 				if fs.isDir(fs.combine(path , '/apis')) then
 					shell.run('api', 'unload', '/'..fs.combine(path , '/apis'))
 				end
@@ -51,7 +55,6 @@ function unload(module)
 					shellPath, t = string.gsub(shellPath, pattern,"")
 					shell.setPath(shellPath)
 				end
-
 				print('unloaded ' .. module )
 				save()
 				return true			
@@ -77,8 +80,8 @@ function load(module)
 			shell.setPath(shell.path() .. ':'.. '/'..fs.combine(path , '/programs'))
 		end
 
-		if fs.exists(fs.combine(path , '/startup')) then
-			shell.run(fs.combine(path , '/startup'))
+		if fs.exists(fs.combine(path , '/load')) then
+			shell.run(fs.combine(path , '/load'))
 		end
 
 		print ('loaded ' .. module)
@@ -122,12 +125,12 @@ function removeBoot(module)
 end
 
 function refresh()
-	if modulesConfig ~= nil then
-		config = modulesConfig.boot
+	if modulesConfig ~= nil and modulesConfig.boot ~= nil then
+		bootConfig = modulesConfig.boot
 	else
-		config = {}
+		bootConfig = {}
 	end 
-	modulesConfig = {loaded = {}, boot = config}	
+	modulesConfig = {loaded = {}, boot = bootConfig}	
 	save()
 
 	for i = 1, #modulesConfig.boot do
@@ -143,13 +146,14 @@ function install(name)
 	for key, value in pairs(modList) do
 		if name == tostring(key) then
 			currentDir = shell.dir()
-			shell.setDir(modulePath)
-			installPath =  tostring(key)
+			shell.setDir('/')
+			installPath =  modulePath ..'/'.. tostring(key)
 			print('install Path: '.. installPath)
+			print('working dir: '.. currentDir)
 			if shell.run('gitget', value.githubAccount, value.githubName, value.githubBranch, installPath) then
 				return true
 			end
-			shell.setDir(currentDir)
+			shell.setdir(currentDir)
 		end
 	end
 	return false

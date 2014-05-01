@@ -40,7 +40,7 @@ if not daemon.isInstalled() then daemon.install() end
 print("loading user interface")
 if userConfig.interface ~= default then
 	local path = coreDir .."/interface/".. userConfig.interface
-	daemon.add("interface", shell.run(path))
+	shell.run(path)
 end
 
 
