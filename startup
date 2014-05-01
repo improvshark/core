@@ -12,13 +12,11 @@ print("loading core apis")
 if shell.run('api', 'load', coreDir ..'/system/core_apis') == false then 
 	print("failed to load apis")
 end
+print("loading daemon Manager")
+if not daemon.isInstalled() then daemon.install() end
 
 print("loading modules")
 shell.run('module', 'refresh')
-
-
-
-
 
 
 -- loading user crap
@@ -33,7 +31,7 @@ if shell.run('api', 'load', userConfig.apis ) == false then
 end
 
 
-if not daemon.isInstalled() then daemon.install() end
+
 
 
 -- loading interface
