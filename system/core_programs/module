@@ -42,7 +42,8 @@ function unload(module)
 				table.remove(modulesConfig.loaded, i)
 
 				if fs.exists(fs.combine(path , '/unload')) then
-					shell.run(fs.combine(path , '/unload'))
+					print('running unload script')
+					shell.run('/'..fs.combine(path , '/unload'))
 				end
 
 				if fs.isDir(fs.combine(path , '/apis')) then
@@ -71,7 +72,7 @@ function load(module)
 	if fs.isDir(path) and loaded(module) == false then
 		table.insert(modulesConfig.loaded, 1, module)
 
-
+		
 		if fs.isDir(fs.combine(path , '/apis')) then
 			shell.run('api', 'load', '/'..fs.combine(path , '/apis'))
 		end
@@ -81,7 +82,8 @@ function load(module)
 		end
 
 		if fs.exists(fs.combine(path , '/load')) then
-			shell.run(fs.combine(path , '/load'))
+			print('running load script')
+			shell.run('/'..fs.combine(path , '/load'))
 		end
 
 		print ('loaded ' .. module)
