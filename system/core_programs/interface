@@ -3,6 +3,11 @@ local arg = {...}
 local vocal = true;
 local settingDir = core.coreDir()..'/config/user.config'
 local setting = configman.load(settingDir)
+if setting == nil then
+	setting = {interface = "extendedShell", apis = "/user/apis", programs = "/user/programs"}
+	configman.save(settingDir, setting)
+end
+
 
 local interfaces = {"extendedShell"}
 local pastebinLink = {"wJVmXZv7"}

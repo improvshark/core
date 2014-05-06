@@ -6,7 +6,7 @@ function load(path)
 		file.close()
 		return temp
 	else
-		return {}
+		return nil
 	end 
 end
 

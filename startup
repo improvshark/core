@@ -19,9 +19,14 @@ print("loading modules")
 shell.run('module', 'refresh')
 
 
+
 -- loading user crap
 print("loading user config")
 local userConfig = configman.load(core.coreDir()..'/config/user.config')
+if userConfig == nil then
+	userConfig = {interface = "extendedShell", apis = "/user/apis", programs = "/user/programs"}
+	configman.save(core.coreDir()..'/config/user.config', userConfig)
+end
 
 print("loading user programs")
 shell.setPath(shell.path() .. ':'.. userConfig.programs)

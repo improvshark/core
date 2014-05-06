@@ -4,6 +4,11 @@ local arg = {...}
 modulePath = core.coreDir() ..'/modules'
 
 modulesConfig = configman.load(core.coreDir()..'/config/modules.config')
+if modulesConfig == nil then
+	modulesConfig = {loaded = {}, boot = {}}
+	configman.save(core.coreDir()..'/config/modules.config', modulesConfig)
+end
+
 moduleListPath = core.coreDir() .. '/config/moduleList'
 
 
