@@ -1,0 +1,109 @@
+channel = 1337
+modem = nil
+side = nil
+protocol = 'remote'
+--
+function getModem()
+	sides = {"front", "back", "left", "right", "top","bottom"}
+	for i = 1, #sides do
+		if peripheral.isPresent(sides[i])==true and tostring(peripheral.getType(sides[i])) == 'modem' then
+			return peripheral.wrap(sides[i]), sides[i]
+		end
+	end
+	return false
+end
+
+
+function close()
+ 	modem.close(channel)
+end
+
+
+
+function list(sleepTime)
+	if sleepTime == nil then sleepTime = 1 end
+	message = {messageType = 'function', message = 'getLabel'}
+	rednet.broadcast(textutils.serialize(message), protocol)
+	parallel.waitForAny(function() sleep(sleepTime) end, function()
+		while true do
+			local senderId, message, distance = rednet.receive(protocol)
+			message = textutils.unserialize(message)
+			if message ~= nil and message.label ~= nil then
+				print(message.label)
+			end
+		end
+	end)
+end
+
+function getFuel(name, sleepTime)
+	id = {rednet.lookup(protocol, name)}
+	for i = 1, #id do
+		message = {messageType = 'function', message = 'getFuel'}
+		rednet.send(id[i],textutils.serialize(message), protocol)
+		parallel.waitForAny(function() sleep(sleepTime) end, function()
+			while true do
+				local senderId, message, distance = rednet.receive(protocol)
+				message = textutils.unserialize(message)
+				if message ~= nil and message.fuel ~= nil then
+					print('id: '..id[i]..' fuel: ' .. message.fuel)
+				end
+			end
+		end)
+	end
+end
+
+function command(myArgs)
+	id = {rednet.lookup(protocol, myArgs[2])}
+	commandArgs = ""
+	for i = 3, #myArgs do
+		commandArgs = commandArgs .. " " .. myArgs[i]
+	end
+	for i = 1, #id do
+		message = {messageType = 'command', command = commandArgs}
+		rednet.send(id[i],textutils.serialize(message), protocol)
+		parallel.waitForAny(function() sleep(1) end, function()
+			while true do
+				local senderId, message, distance = rednet.receive(protocol)
+				if message ~= nil and message.success ~= nil then
+					print(message.success)
+				end
+			end
+		end)
+	end
+end
+
+-- modem setup
+modem , side = getModem()
+if modem == false then
+	print('no modem found!')
+	return
+else
+	--print('starting modem')
+	if not modem.isOpen then
+		modem.open(channel)
+	end
+	if not rednet.isOpen(side) then
+		rednet.open(side)
+	end
+	rednet.host(protocol, os.getComputerLabel())
+end
+
+-- handle command
+arg = {...}
+if arg[1] == 'list' then
+	list(tonumber(arg[2]))
+elseif arg[1] == 'fuel' and arg[2] ~= nill then
+	getFuel(arg[2], tonumber(arg[3]) ) 
+elseif arg[1] == 'command' or arg[1] == 'cmd' and arg[2] ~= nill then
+	command(arg)
+end
+
+close()
+
+
+
+
+
+
+
+
