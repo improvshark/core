@@ -1,15 +1,15 @@
-local arg = {...}
 
 
-modulePath = core.coreDir() ..'/modules'
 
-modulesConfig = configman.load(core.coreDir()..'/config/modules.config')
+local modulePath = core.coreDir() ..'/modules'
+
+local modulesConfig = configman.load(core.coreDir()..'/config/modules.config')
 if modulesConfig == nil then
 	modulesConfig = {loaded = {}, boot = {}}
 	configman.save(core.coreDir()..'/config/modules.config', modulesConfig)
 end
 
-moduleListPath = core.coreDir() .. '/config/moduleList'
+local moduleListPath = core.coreDir() .. '/config/moduleList'
 
 
 
@@ -29,7 +29,7 @@ local function loaded(arg, verbose)
 	return false
 end
 
-function list()
+local function list()
 	list = fs.list(modulePath)
 	for i = 1, #list do
 		if fs.isDir(fs.combine(modulePath ,list[i])) then
@@ -38,7 +38,7 @@ function list()
 	end
 end
 
-function unload(module)
+local function unload(module)
 	path = fs.combine(modulePath ,module)
 	if fs.isDir(path) then
 		for i = 1, #modulesConfig.loaded do
@@ -72,7 +72,7 @@ function unload(module)
 	return false
 end
 
-function load(module)
+local function load(module)
 	path = fs.combine(modulePath ,module)
 	if fs.isDir(path) and loaded(module) == false then
 		table.insert(modulesConfig.loaded, 1, module)
@@ -99,7 +99,7 @@ function load(module)
 	return false
 end
 
-function inBoot(module)
+local function inBoot(module)
 	for i = 1, #modulesConfig.boot do
 			if module == modulesConfig.boot[i] then
 				return true
@@ -108,7 +108,7 @@ function inBoot(module)
 	return false
 end
 
-function addBoot(module)
+local function addBoot(module)
 	path = fs.combine(modulePath ,module)
 	if fs.isDir(path) then
 		table.insert(modulesConfig.boot, 1, module)
@@ -119,7 +119,7 @@ function addBoot(module)
 	return false
 end
 
-function removeBoot(module)
+local function removeBoot(module)
 	for i = 1, #modulesConfig.boot do
 		if module == modulesConfig.boot[i] then
 			table.remove(modulesConfig.boot, i)
@@ -131,7 +131,7 @@ function removeBoot(module)
 	return false
 end
 
-function refresh()
+local function refresh()
 	if modulesConfig ~= nil and modulesConfig.boot ~= nil then
 		bootConfig = modulesConfig.boot
 	else
@@ -146,7 +146,7 @@ function refresh()
 
 end
 
-function install(name)
+local function install(name)
 	if name == nil then return false end
 
 	modList = configman.load(moduleListPath)
@@ -166,14 +166,14 @@ function install(name)
 	return false
 end
 
-function installList(...)
+local function installList(...)
 	modList = configman.load(moduleListPath)
 	for key, value in pairs(modList) do
 		print(tostring(key) .. ": " .. string.sub(value.shortDisc,1,22 )) 
 	end
 end
 
-function remove(module)
+local function remove(module)
 	path = fs.combine(modulePath ,module)
 	if fs.isDir(path)then
 		return fs.delete(path)
@@ -181,38 +181,45 @@ function remove(module)
 	return false
 end
 
-if arg[1] == nil then
-	print("api <list/refresh>")
-	print("api <load/unload/remove> <module> ")
-	print("api <boot> <module> ")
-	print("api <install> ")
-	print("api <install/update> <module> ")
-elseif arg[1] == "list" then
-	list()
+local arg = {...}
 
-elseif arg[1] == "unload" and arg[2] ~= nil then
-	unload(arg[2])
-elseif arg[1] == "boot" and arg[2] ~= nil then
-	if inBoot(arg[2]) then
-		removeBoot(arg[2])
+local function main()
+	
+
+	if arg[1] == nil then
+		print("api <list/refresh>")
+		print("api <load/unload/remove> <module> ")
+		print("api <boot> <module> ")
+		print("api <install> ")
+		print("api <install/update> <module> ")
+	elseif arg[1] == "list" then
+		list()
+
+	elseif arg[1] == "unload" and arg[2] ~= nil then
+		unload(arg[2])
+	elseif arg[1] == "boot" and arg[2] ~= nil then
+		if inBoot(arg[2]) then
+			removeBoot(arg[2])
+		else
+			addBoot(arg[2])
+		end
+	elseif arg[1] == "remove" and arg[2] ~= nil then
+		unload(arg[2])
+		remove(arg[2])
+	elseif arg[1] == "load" and arg[2] ~= nil then
+		load(arg[2])
+	elseif arg[1] == "refresh"  then
+		refresh()
+	elseif arg[1] == "install" and arg[2] == nil then
+		installList()
+	elseif (arg[1] == "install" or arg[1] == "update") and arg[2] ~= nil then
+		if not install(arg[2]) then 
+			print('cant find: ' .. arg[2])
+		end
 	else
-		addBoot(arg[2])
+		print('bad arguments')
 	end
-elseif arg[1] == "remove" and arg[2] ~= nil then
-	unload(arg[2])
-	remove(arg[2])
-elseif arg[1] == "load" and arg[2] ~= nil then
-	load(arg[2])
-elseif arg[1] == "refresh"  then
-	refresh()
-elseif arg[1] == "install" and arg[2] == nil then
-	installList()
-elseif (arg[1] == "install" or arg[1] == "update") and arg[2] ~= nil then
-	if not install(arg[2]) then 
-		print('cant find: ' .. arg[2])
-	end
-else
-	print('bad arguments')
 end
 
+main()
 

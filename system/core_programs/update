@@ -1,11 +1,14 @@
--- check for gitget if dont have download gitget
+local function main()
 
-currentDir = shell.dir()
-shell.setDir('/')
+	currentDir = shell.dir()
+	shell.setDir('/')
 
-shell.run('gitget', 'improvshark', 'core', 'master', 'core')
-shell.run('pastebin', 'get', 'F0HtmrGY', '/startup') 
+	shell.run('gitget', 'improvshark', 'core', 'master', 'core')
+	shell.run('pastebin', 'get', 'F0HtmrGY', '/startup') 
 
-shell.setDir(currentDir)
+	shell.setDir(currentDir)
+end
+
+main()
 
 

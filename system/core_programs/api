@@ -1,4 +1,4 @@
-local arg = {...}
+
 
 local vocal = true;
 
@@ -6,7 +6,7 @@ function isApi(path)
 	return true
 end
 
-function loadApi(path)
+local function loadApi(path)
 	if isApi(path) then
 		if os.loadAPI(path) and vocal then
    			print('+ loaded: ' .. fs.getName(path) )
@@ -17,7 +17,7 @@ function loadApi(path)
 	end
 end
 
-function unloadApi(path)
+local function unloadApi(path)
 	if isApi(path) then
 		os.unloadAPI(fs.getName(path))
 	 	if vocal then
@@ -29,7 +29,7 @@ function unloadApi(path)
 	end
 end
 
-function load(path, reqursive)
+local function load(path, reqursive)
 
 	if  fs.exists(path) == false  then
 		print('file or path does not exist')	
@@ -50,7 +50,7 @@ function load(path, reqursive)
 	end
 end
 
-function unload(path, reqursive)
+local function unload(path, reqursive)
 
 	if  fs.exists(path) == false  then
 		print('file or path does not exist')	
@@ -71,18 +71,27 @@ function unload(path, reqursive)
 	end
 end
 
-if arg[1] == nil then
-	print("api <load/unload> <path/file> ")
+local arg = {...}
+
+local function main()
+
+	if arg[1] == nil then
+		print("api <load/unload> <path/file> ")
+	end
+
+	if arg[1] == "load" and arg[2] ~= nil then
+		load(shell.resolve(arg[2]), false)
+	end
+
+	if arg[1] == "unload" and arg[2] ~= nil then
+		unload(shell.resolve(arg[2]), false)
+	end
+
+	if arg[1] == "list" then
+		shell.run('apis')
+	end
+
 end
 
-if arg[1] == "load" and arg[2] ~= nil then
-	load(shell.resolve(arg[2]), false)
-end
 
-if arg[1] == "unload" and arg[2] ~= nil then
-	unload(shell.resolve(arg[2]), false)
-end
-
-if arg[1] == "list" then
-	shell.run('apis')
-end
+main()

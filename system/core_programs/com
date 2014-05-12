@@ -1,9 +1,9 @@
-channel = 1337
-modem = nil
-side = nil
-protocol = 'remote'
+local channel = 1337
+local modem = nil
+local side = nil
+local protocol = 'remote'
 --
-function getModem()
+local function getModem()
 	sides = {"front", "back", "left", "right", "top","bottom"}
 	for i = 1, #sides do
 		if peripheral.isPresent(sides[i])==true and tostring(peripheral.getType(sides[i])) == 'modem' then
@@ -14,13 +14,13 @@ function getModem()
 end
 
 
-function close()
+local function close()
  	modem.close(channel)
 end
 
 
 
-function list(sleepTime)
+local function list(sleepTime)
 	if sleepTime == nil then sleepTime = 1 end
 	message = {messageType = 'function', message = 'getLabel'}
 	rednet.broadcast(textutils.serialize(message), protocol)
@@ -35,7 +35,7 @@ function list(sleepTime)
 	end)
 end
 
-function getFuel(name, sleepTime)
+local function getFuel(name, sleepTime)
 	id = {rednet.lookup(protocol, name)}
 	for i = 1, #id do
 		message = {messageType = 'function', message = 'getFuel'}
@@ -52,7 +52,7 @@ function getFuel(name, sleepTime)
 	end
 end
 
-function command(myArgs)
+local function command(myArgs)
 	id = {rednet.lookup(protocol, myArgs[2])}
 	commandArgs = ""
 	for i = 3, #myArgs do
@@ -72,33 +72,35 @@ function command(myArgs)
 	end
 end
 
--- modem setup
-modem , side = getModem()
-if modem == false then
-	print('no modem found!')
-	return
-else
-	--print('starting modem')
-	if not modem.isOpen then
-		modem.open(channel)
+local function main()
+	-- modem setup
+	modem , side = getModem()
+	if modem == false then
+		print('no modem found!')
+		return
+	else
+		--print('starting modem')
+		if not modem.isOpen then
+			modem.open(channel)
+		end
+		if not rednet.isOpen(side) then
+			rednet.open(side)
+		end
+		rednet.host(protocol, os.getComputerLabel())
 	end
-	if not rednet.isOpen(side) then
-		rednet.open(side)
+
+	-- handle command
+	arg = {...}
+	if arg[1] == 'list' then
+		list(tonumber(arg[2]))
+	elseif arg[1] == 'fuel' and arg[2] ~= nill then
+		getFuel(arg[2], tonumber(arg[3]) ) 
+	elseif arg[1] == 'command' or arg[1] == 'cmd' and arg[2] ~= nill then
+		command(arg)
 	end
-	rednet.host(protocol, os.getComputerLabel())
-end
 
--- handle command
-arg = {...}
-if arg[1] == 'list' then
-	list(tonumber(arg[2]))
-elseif arg[1] == 'fuel' and arg[2] ~= nill then
-	getFuel(arg[2], tonumber(arg[3]) ) 
-elseif arg[1] == 'command' or arg[1] == 'cmd' and arg[2] ~= nill then
-	command(arg)
+	close()
 end
-
-close()
 
 
 

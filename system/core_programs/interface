@@ -12,13 +12,13 @@ end
 local interfaces = {"extendedShell"}
 local pastebinLink = {"wJVmXZv7"}
 
-function save()
+local function save()
 	configman.save(settingDir, setting)
 	print(' must restart os for changes to take affect')
 end
 
 
-function use(arg)
+local function use(arg)
 	if arg == 'default' then
 		setting.interface = 'default'
 		save()
@@ -41,14 +41,14 @@ function use(arg)
 end
 
 
-function list()
+local function list()
 	print("default, ")
 	for i = 1, #interfaces do
 		print(interfaces[i] .. ', ')
 	end
 end
 
-function install(arg)
+local function install(arg)
 
 
 	if fs.exists('/core/interface/'..arg) == false then
@@ -68,18 +68,24 @@ function install(arg)
 
 end
 
-if arg[1] == nil then
-	print("interface <list,install> <interface> ")
 
-elseif arg[1] == "install" and arg[2] == nil then
-	list()
+local function main()
 
-elseif arg[1] == "install" and arg[2] == 'default' then
-	use('default')
+	if arg[1] == nil then
+		print("interface <list,install> <interface> ")
 
-elseif arg[1] == "install" and arg[2] ~= nil then
-	install(arg[2])
+	elseif arg[1] == "install" and arg[2] == nil then
+		list()
 
-elseif arg[1] == "list" then
-	list()
+	elseif arg[1] == "install" and arg[2] == 'default' then
+		use('default')
+
+	elseif arg[1] == "install" and arg[2] ~= nil then
+		install(arg[2])
+
+	elseif arg[1] == "list" then
+		list()
+	end
 end
+
+main()
