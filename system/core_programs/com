@@ -104,6 +104,7 @@ local function main()
 	close()
 end
 
+main()
 
 
 
