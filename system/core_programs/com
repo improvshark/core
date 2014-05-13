@@ -72,6 +72,8 @@ local function command(myArgs)
 	end
 end
 
+local arg = {...}
+
 local function main()
 	-- modem setup
 	modem , side = getModem()
@@ -90,7 +92,7 @@ local function main()
 	end
 
 	-- handle command
-	arg = {...}
+	
 	if arg[1] == 'list' then
 		list(tonumber(arg[2]))
 	elseif arg[1] == 'fuel' and arg[2] ~= nill then
