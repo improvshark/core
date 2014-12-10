@@ -187,11 +187,11 @@ local function main()
 	
 
 	if arg[1] == nil then
-		print("api <list/refresh>")
-		print("api <load/unload/remove> <module> ")
-		print("api <boot> <module> ")
-		print("api <install> ")
-		print("api <install/update> <module> ")
+		print("module <list/refresh>")
+		print("module <load/unload/remove> <module> ")
+		print("module <boot> <module> ")
+		print("module <install> ")
+		print("module <install/update> <module> ")
 	elseif arg[1] == "list" then
 		list()
 
