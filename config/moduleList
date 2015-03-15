@@ -13,11 +13,11 @@
 		"shortDisc": "multi turtle quarry",
 		"longDisc": "multi turtle quarry"
 	},
-	"crane": {
-		"githubName": "core_crane",
+	"openP": {
+		"githubName": "core_openP",
 		"githubBranch": "master",
 		"githubAccount": "improvshark",
-		"shortDisc": "turtle crane",
-		"longDisc": "turtle crane"
+		"shortDisc": "programs for openPeripheral",
+		"longDisc": "programs for openPeripheral"
 	}
 }
