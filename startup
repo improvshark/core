@@ -35,15 +35,12 @@ if shell.run('api', 'load', userConfig.apis ) == false then
 	print("failed to load apis")
 end
 
-
 -- run boot programs
-
-for i=1, #userConfig.boot do
-	shell.run(userConfig.boot[i])
+if userConfig.boot ~= nil then
+	for i=1, #userConfig.boot do
+		shell.run(userConfig.boot[i])
+	end
 end
-
-
-
 
 -- loading interface
 print("loading user interface")
