@@ -4,6 +4,22 @@ function coreDir()
 	return  "/core"
 end
 
+function addBoot(path)
+	local userConfig = configman.load(core.coreDir()..'/config/user.config')
+	table.insert(userConfig.boot,path)
+	configman.save(core.coreDir()..'/config/user.config', userConfig)
+end
+
+function removeBoot(path)
+	local userConfig = configman.load(core.coreDir()..'/config/user.config')
+
+	for i=1, #userConfig.boot do
+	table.remove(userConfig.boot,i)
+	end
+	configman.save(core.coreDir()..'/config/user.config', userConfig)
+end
+
+
 function isApi(path)
 
 end
@@ -16,7 +32,7 @@ end
 --[[
 function loadProgram(path, reqursive)
 	if  fs.exists(path) == false  then
-		print('file or path does not exist')	
+		print('file or path does not exist')
 		return false
 	end
 
@@ -29,7 +45,7 @@ function loadProgram(path, reqursive)
    				shell.setPath(shell.path() .. ':' fs.combine(path, table[i]) )
    			end
 		end
-	else 
+	else
 		loadApi(path)
 	end
 end
