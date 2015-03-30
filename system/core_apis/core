@@ -15,7 +15,7 @@ function removeBoot(path)
 	local userConfig = configman.load(core.coreDir()..'/config/user.config')
 	if userConfig.boot == nil then userConfig.boot = {} end
 	for i=1, #userConfig.boot do
-	table.remove(userConfig.boot,i)
+	if userConfig.boot[i] == path then table.remove(userConfig.boot,i) end
 	end
 	configman.save(core.coreDir()..'/config/user.config', userConfig)
 end
