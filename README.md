@@ -14,7 +14,7 @@ core os is broken into
 	
 	config ( user and system config files)
 	interface ( an atempt at giveing a way to load different..."destop envirnments" )
-	modules ( modules are ment to extend the functionality of core)
+	modules ( modules are meant to extend the functionality of core)
 		
 	system ( the files that make up core )
 		core_apis
