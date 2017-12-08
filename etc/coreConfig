@@ -1,10 +1,9 @@
 {
     "lib": [
-        "/lib/configman",
+        "/lib/json",
         "/lib/core",
         "/lib/daemon",
         "/lib/filetype",
-        "/lib/json",
         "/lib/yargs",
     ],
     "boot": [

@@ -1,39 +1,57 @@
-
+local coreDir = ''
 
 function coreDir()
-	return  ""
+	return  coreDir
+end
+
+function loadConfig(path)
+	if fs.exists(path) then
+		local file = assert(fs.open(path, "r"))
+		temp = json.decode(file.readAll())
+		file.close()
+		return temp
+	else
+		return nil
+	end
+end
+
+function saveConfig(path, obj)
+	local file = assert(fs.open(path,"w"))
+	string = json.encodePretty(obj)
+	file.write(string)
+	file.close()
 end
 
 function addBoot(path)
-	local userConfig = configman.load(core.coreDir()..'/etc/coreConfig')
+	local userConfig = loadConfig(core.coreDir()..'/etc/coreConfig')
 	if userConfig.boot == nil then userConfig.boot = {} end
 	table.insert(userConfig.boot,path)
-	configman.save(core.coreDir()..'/etc/coreConfig', userConfig)
+	saveConfig(core.coreDir()..'/etc/coreConfig', userConfig)
 end
 
 function removeBoot(path)
-	local userConfig = configman.load(core.coreDir()..'/etc/coreConfig')
+	local userConfig = loadConfig(core.coreDir()..'/etc/coreConfig')
 	if userConfig.boot == nil then userConfig.boot = {} end
 	for i=1, #userConfig.boot do
 	if userConfig.boot[i] == path then table.remove(userConfig.boot,i) end
 	end
-	configman.save(core.coreDir()..'/etc/coreConfig', userConfig)
+	saveConfig(core.coreDir()..'/etc/coreConfig', userConfig)
 end
 
 function addLib(path)
-	local userConfig = configman.load(core.coreDir()..'/etc/coreConfig')
+	local userConfig = loadConfig(core.coreDir()..'/etc/coreConfig')
 	if userConfig.lib == nil then userConfig.lib = {} end
 	table.insert(userConfig.lib,path)
-	configman.save(core.coreDir()..'/etc/coreConfig', userConfig)
+	saveConfig(core.coreDir()..'/etc/coreConfig', userConfig)
 end
 
 function removeLib(path)
-	local userConfig = configman.load(core.coreDir()..'/etc/coreConfig')
+	local userConfig = loadConfig(core.coreDir()..'/etc/coreConfig')
 	if userConfig.lib == nil then userConfig.lib = {} end
 	for i=1, #userConfig.lib do
 	if userConfig.lib[i] == path then table.remove(userConfig.lib,i) end
 	end
-	configman.save(core.coreDir()..'/etc/coreConfig', userConfig)
+	saveConfig(core.coreDir()..'/etc/coreConfig', userConfig)
 end
 
 function isApi(path)

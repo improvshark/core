@@ -3,10 +3,10 @@
 
 local modulePath = core.coreDir() ..'/modules'
 
-local modulesConfig = configman.load(core.coreDir()..'/config/modules.config')
+local modulesConfig = core.loadConfig(core.coreDir()..'/config/modules.config')
 if modulesConfig == nil then
 	modulesConfig = {loaded = {}, boot = {}}
-	configman.save(core.coreDir()..'/config/modules.config', modulesConfig)
+	core.saveConfig(core.coreDir()..'/config/modules.config', modulesConfig)
 end
 
 local moduleListPath = core.coreDir() .. '/config/moduleList'
@@ -14,7 +14,7 @@ local moduleListPath = core.coreDir() .. '/config/moduleList'
 
 
 local function save()
-	configman.save(core.coreDir()..'/config/modules.config', modulesConfig)
+	core.saveConfig(core.coreDir()..'/config/modules.config', modulesConfig)
 end
 
 local function loaded(arg, verbose)
@@ -149,7 +149,7 @@ end
 local function install(name)
 	if name == nil then return false end
 
-	modList = configman.load(moduleListPath)
+	modList = core.loadConfig(moduleListPath)
 	for key, value in pairs(modList) do
 		if name == tostring(key) then
 			currentDir = shell.dir()
@@ -168,7 +168,7 @@ local function install(name)
 end
 
 local function installList(...)
-	modList = configman.load(moduleListPath)
+	modList = core.loadConfig(moduleListPath)
 	for key, value in pairs(modList) do
 		print(tostring(key) .. ": " .. string.sub(value.shortDisc,1,22 ))
 	end

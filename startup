@@ -5,9 +5,9 @@ shell.setDir(coreDir .. "/home")
 
 -- louding minimum apis.
 os.loadAPI(coreDir .. '/lib/json')
-os.loadAPI(coreDir .. '/lib/configman')
+os.loadAPI(coreDir .. '/lib/core')
 
-local config = configman.load(coreDir .. '/etc/coreConfig');
+local config = core.loadConfig(coreDir .. '/etc/coreConfig');
 
 -- building path
 print('Building Path')
