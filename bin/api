@@ -29,44 +29,44 @@ local function unloadApi(path)
 	end
 end
 
-local function load(path, reqursive)
+local function load(path, recursive)
 
 	if  fs.exists(path) == false  then
-		print('file or path does not exist')	
+		print('file or path does not exist')
 		return false
 	end
 
 	if fs.isDir(path) then
 		local table = fs.list(path)
 		for i=1,#table do
-   			if reqursive == true and fs.isDir(table[i]) then
+   			if recursive == true and fs.isDir(table[i]) then
    				load(fs.combine(path, table[i]), true)
    			else
    				loadApi(fs.combine(path, table[i]) )
    			end
 		end
-	else 
+	else
 		loadApi(path)
 	end
 end
 
-local function unload(path, reqursive)
+local function unload(path, recursive)
 
 	if  fs.exists(path) == false  then
-		print('file or path does not exist')	
+		print('file or path does not exist')
 		return false
 	end
 
 	if fs.isDir(path) then
 		local table = fs.list(path)
 		for i=1,#table do
-   			if reqursive == true and fs.isDir(table[i]) then
+   			if recursive == true and fs.isDir(table[i]) then
    				unload(fs.combine(path, table[i]), true)
    			else
    				unloadApi(fs.combine(path, table[i]) )
    			end
 		end
-	else 
+	else
 		unloadApi(path)
 	end
 end

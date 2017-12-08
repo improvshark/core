@@ -1,53 +1,40 @@
 
 
-coreDir = '/core'
+local coreDir = ''
+shell.setDir(coreDir .. "/home")
 
-print("starting core")
-shell.setDir("/user")
+-- louding minimum apis.
+os.loadAPI(coreDir .. '/lib/json')
+os.loadAPI(coreDir .. '/lib/configman')
 
-print("loading core programs")
-shell.setPath(shell.path() .. ':'.. coreDir ..'/system/core_programs')
+local config = configman.load(coreDir .. '/etc/coreConfig');
 
-print("loading core apis")
-if shell.run('api', 'load', coreDir ..'/system/core_apis') == false then
-	print("failed to load apis")
+-- building path
+print('Building Path')
+local path = ''
+for i = 1, #config.path do
+	path = path .. config.path[i]
+	if i != #config.path then
+		path .. ":"
+	end
 end
+shell.setPath(path)
+
+
+-- loading libs.
+print("loading libs")
+for i = 1, #config.lib do
+	os.loadAPI(config.lib[i])
+end
+
+-- loading daemonManager.
 print("loading daemon Manager")
 if not daemon.isInstalled() then daemon.install() end
 
-print("loading modules")
-shell.run('module', 'refresh')
-
-
-
--- loading user crap
-print("loading user config")
-local userConfig = configman.load(core.coreDir()..'/config/user.config')
-if userConfig == nil then
-	userConfig = {interface = "extendedShell", apis = "/user/apis", programs = "/user/programs", boot = {}}
-	configman.save(core.coreDir()..'/config/user.config', userConfig)
-end
-
-print("loading user programs")
-shell.setPath(shell.path() .. ':'.. userConfig.programs)
-print("loading user apis")
-if shell.run('api', 'load', userConfig.apis ) == false then
-	print("failed to load apis")
-end
 
 -- run boot programs
-if userConfig.boot ~= nil then
-	for i=1, #userConfig.boot do
+if config.boot ~= nil then
+	for i=1, #config.boot do
 		shell.run(userConfig.boot[i])
 	end
 end
-
--- loading interface
-print("loading user interface")
-if userConfig.interface ~= default then
-	local path = coreDir .."/interface/".. userConfig.interface
-	shell.run(path)
-end
-
-
---shell.run("/core/system/main")

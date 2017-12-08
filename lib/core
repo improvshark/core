@@ -1,0 +1,68 @@
+
+
+function coreDir()
+	return  ""
+end
+
+function addBoot(path)
+	local userConfig = configman.load(core.coreDir()..'/etc/coreConfig')
+	if userConfig.boot == nil then userConfig.boot = {} end
+	table.insert(userConfig.boot,path)
+	configman.save(core.coreDir()..'/etc/coreConfig', userConfig)
+end
+
+function removeBoot(path)
+	local userConfig = configman.load(core.coreDir()..'/etc/coreConfig')
+	if userConfig.boot == nil then userConfig.boot = {} end
+	for i=1, #userConfig.boot do
+	if userConfig.boot[i] == path then table.remove(userConfig.boot,i) end
+	end
+	configman.save(core.coreDir()..'/etc/coreConfig', userConfig)
+end
+
+function addLib(path)
+	local userConfig = configman.load(core.coreDir()..'/etc/coreConfig')
+	if userConfig.lib == nil then userConfig.lib = {} end
+	table.insert(userConfig.lib,path)
+	configman.save(core.coreDir()..'/etc/coreConfig', userConfig)
+end
+
+function removeLib(path)
+	local userConfig = configman.load(core.coreDir()..'/etc/coreConfig')
+	if userConfig.lib == nil then userConfig.lib = {} end
+	for i=1, #userConfig.lib do
+	if userConfig.lib[i] == path then table.remove(userConfig.lib,i) end
+	end
+	configman.save(core.coreDir()..'/etc/coreConfig', userConfig)
+end
+
+function isApi(path)
+
+end
+
+function isProgram(path)
+
+end
+
+
+--[[
+function loadProgram(path, reqursive)
+	if  fs.exists(path) == false  then
+		print('file or path does not exist')
+		return false
+	end
+
+	if fs.isDir(path) then
+		local table = fs.list(path)
+		for i=1,#table do
+   			if reqursive == true and fs.isDir(table[i]) then
+   				loadProgram(fs.combine(path, table[i]), true)
+   			else
+   				shell.setPath(shell.path() .. ':' fs.combine(path, table[i]) ) -- cannot use shell. api in an api
+   			end
+		end
+	else
+		loadApi(path)
+	end
+end
+]]--

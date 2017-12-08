@@ -1,0 +1,18 @@
+{
+    "lib": [
+        "/lib/configman",
+        "/lib/core",
+        "/lib/daemon",
+        "/lib/filetype",
+        "/lib/json",
+        "/lib/yargs",
+    ],
+    "boot": [
+        "/boot/hello",
+    ],
+    "path": [
+        "/bin",
+        "/usr/bin",
+        "/home/bin",
+    ]
+}
