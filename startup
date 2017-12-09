@@ -1,5 +1,3 @@
-
-
 local coreDir = ''
 shell.setDir(coreDir .. "/home")
 
@@ -11,11 +9,11 @@ local config = core.loadConfig(coreDir .. '/etc/coreConfig');
 
 -- building path
 print('Building Path')
-local path = ''
+local path =  shell.path()  .. ':'
 for i = 1, #config.path do
 	path = path .. config.path[i]
-	if i != #config.path then
-		path .. ":"
+	if i ~= #config.path then
+		path = path .. ":"
 	end
 end
 shell.setPath(path)
@@ -24,6 +22,7 @@ shell.setPath(path)
 -- loading libs.
 print("loading libs")
 for i = 1, #config.lib do
+	print('loading ' .. config.lib[i])
 	os.loadAPI(config.lib[i])
 end
 
@@ -31,10 +30,9 @@ end
 print("loading daemon Manager")
 if not daemon.isInstalled() then daemon.install() end
 
-
 -- run boot programs
 if config.boot ~= nil then
 	for i=1, #config.boot do
-		shell.run(userConfig.boot[i])
+		shell.run(config.boot[i])
 	end
 end

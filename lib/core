@@ -1,7 +1,7 @@
-local coreDir = ''
+local baseDir = ''
 
 function coreDir()
-	return  coreDir
+	return  baseDir
 end
 
 function loadConfig(path)
@@ -50,6 +50,22 @@ function removeLib(path)
 	if userConfig.lib == nil then userConfig.lib = {} end
 	for i=1, #userConfig.lib do
 	if userConfig.lib[i] == path then table.remove(userConfig.lib,i) end
+	end
+	saveConfig(core.coreDir()..'/etc/coreConfig', userConfig)
+end
+
+function addPath(path)
+	local userConfig = loadConfig(core.coreDir()..'/etc/coreConfig')
+	if userConfig.path == nil then userConfig.path = {} end
+	table.insert(userConfig.path,path)
+	saveConfig(core.coreDir()..'/etc/coreConfig', userConfig)
+end
+
+function removePath(path)
+	local userConfig = loadConfig(core.coreDir()..'/etc/coreConfig')
+	if userConfig.path == nil then userConfig.path = {} end
+	for i=1, #userConfig.path do
+	if userConfig.path[i] == path then table.remove(userConfig.path,i) end
 	end
 	saveConfig(core.coreDir()..'/etc/coreConfig', userConfig)
 end

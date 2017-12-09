@@ -9,11 +9,12 @@ shell.run('/gitget', 'improvshark', 'core', 'master', '/')
 
 -- make missing folders.
 shell.run('mkdir', '/home')
-shell.run('mkdir', '/daemon')
+shell.run('mkdir', '/tmp')
 shell.run('mkdir', '/usr')
 shell.run('mkdir', '/usr/bin')
 shell.run('mkdir', '/usr/lib')
 
 fs.delete("/gitget")
+fs.delete("/json")
 
 os.reboot()
