@@ -31,7 +31,7 @@ local function install(name)
         end
 
         if fs.exists(installPath .. '/daemons') then
-          local files = fs.list(installPath .. '/apis')
+          local files = fs.list(installPath .. '/daemons')
           for i = 1, #files do
             shell.run('daemon', 'add', installPath .. '/daemons/' .. files[i])
           end
