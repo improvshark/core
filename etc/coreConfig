@@ -1,11 +1,11 @@
 {
 	"boot": [
+		"/boot/hello",
 	],
 	"path": [
 		"/bin",
 		"/usr/bin",
 		"/home/bin",
-		"/usr/turtleTools/programs",
 	],
 	"lib": [
 		"/lib/json",
@@ -13,8 +13,5 @@
 		"/lib/daemon",
 		"/lib/filetype",
 		"/lib/yargs",
-		"/usr/turtleTools/apis/invintory",
-		"/usr/turtleTools/apis/nav",
-		"/usr/turtleTools/apis/pos"
 	]
 }
