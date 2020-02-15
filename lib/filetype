@@ -3,9 +3,9 @@ finish = ">--"
 
 
 function openFile(path)
-	local file = assert( fs.open(path, "r") )
-	temp = file.readAll()
-	file.close()
+	local fileA = assert( fs.open(path, "r") )
+	temp = fileA.readAll()
+	fileA.close()
 	return temp
 end
 
@@ -39,14 +39,14 @@ function is(path, fileType)
 end
 
 function set(path, fileType)
-	local file = assert( fs.open(path, "r") )
-	temp = file.readAll()
-	file.close()
+	local fileA = assert( fs.open(path, "r") )
+	temp = fileA.readAll()
+	fileA.close()
 	temp = strip(temp)
-	local file = assert( fs.open(path,"w"))
-	file.writeLine(start .. fileType .. finish)
-	file.write(temp)
-	file.close()
+	local fileA = assert( fs.open(path,"w"))
+	fileA.writeLine(start .. fileType .. finish)
+	fileA.write(temp)
+	fileA.close()
 end
 
 function get(path)

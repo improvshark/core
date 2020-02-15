@@ -214,10 +214,10 @@ end
 --[[ Ext-shell additions --]]
 
 --File Useage --
-local function save(A,B) local file = fs.open(tostring(A),"w") file.write(B) file.close() end
+local function save(A,B) local fileA = fs.open(tostring(A),"w") fileA.write(B) fileA.close() end
 local function saveT(A,B) save(A,textutils.serialize(B)) end
 local function saveTL(A,B) save(A,string.gsub(textutils.serialize(B),"\n%s*","")) end
-local function get(A) local file = fs.open(tostring(A),"r") if not file then return false end local data = file.readAll() file.close() if data then return data end end
+local function get(A) local fileA = fs.open(tostring(A),"r") if not fileA then return false end local data = fileA.readAll() fileA.close() if data then return data end end
 local function getT(A) local data = get(A) if data then data = textutils.unserialize(data) end if data then return data end end
 
 local saveDir= (parentShell and parentShell.getRunningProgram and parentShell.getRunningProgram()) or "/" 
@@ -351,7 +351,7 @@ table.insert(ArgLists['power'],1,'true')
 	--If there is 'restart' look for word in arguments and repeat starting process
 
 	--When you reach word you need
-	--If there is an ['file']=true then is simply to start filesystem pathfinding
+	--If there is an ['fileA']=true then is simply to start filesystem pathfinding
 	--If there is an 'specialArgs' and you are in tab mode then run it and set result as 'args' content
 	--If you are outside of whole table do filesystem tab-complete without programs
 
@@ -384,17 +384,17 @@ local tProgramsArguments={
 		},
 	},	
 	['rom/programs/http/pastebin'] = {['suggest']='mode',['args']={'put', 'get' , 'run'},['next']={
-		['put']={['suggest']='filename',['file']=true},
+		['put']={['suggest']='filename',['fileA']=true},
 		['run']={['suggest']='code',['args']={}},
-		['get']={['suggest']='code',['args']={},['next']=setany({['suggest']='filename',['file']=true})},
+		['get']={['suggest']='code',['args']={},['next']=setany({['suggest']='filename',['fileA']=true})},
 		},
 	},
 	['rom/programs/monitor'] = {['suggest']='side',['args']={},['specialArgs']=function() return peripherallook("monitor") end,['next']=setany({['suggest']='program',['restart']=true})},
 	
 	--Filesystem operations
-	['rom/programs/copy'] = {['suggest']='source',['file']=true,['next']=setany({['suggest']='destination',['file']=true,['next']={}})},
-	['rom/programs/rename'] = {['suggest']='source',['file']=true,['next']=setany({['suggest']='destination',['file']=true,['next']={}})},
-	['rom/programs/move'] = {['suggest']='source',['file']=true,['next']=setany({['suggest']='destination',['file']=true,['next']={}})},
+	['rom/programs/copy'] = {['suggest']='source',['fileA']=true,['next']=setany({['suggest']='destination',['fileA']=true,['next']={}})},
+	['rom/programs/rename'] = {['suggest']='source',['fileA']=true,['next']=setany({['suggest']='destination',['fileA']=true,['next']={}})},
+	['rom/programs/move'] = {['suggest']='source',['fileA']=true,['next']=setany({['suggest']='destination',['fileA']=true,['next']={}})},
 	
 	--2 argument list
 	['rom/programs/turtle/equip'] = {['suggest']='slo',['args']=ArgLists['slots'],['next']=setall(ArgLists['slots'],{['suggest']='side',['args']=ArgLists['equip']})},
@@ -411,13 +411,13 @@ local tProgramsArguments={
 	
 	--simple arguments that will not be suggested (or are a filepaths)
 	['rom/programs/turtle/craft'] = {['suggest']='amount',['args']={}},
-	['rom/programs/cd'] = {['suggest']='path',['file']=true},
-	['rom/programs/delete'] = {['suggest']='path',['file']=true},
-	['rom/programs/mkdir'] = {['suggest']='path',['file']=true},
-	['rom/programs/list'] = {['suggest']='[path]',['file']=true},
-	['rom/programs/edit'] = {['suggest']='path',['file']=true},
-	['rom/programs/type'] = {['suggest']='path',['file']=true},
-	['rom/programs/advanced/paint'] = {['suggest']='path',['file']=true},
+	['rom/programs/cd'] = {['suggest']='path',['fileA']=true},
+	['rom/programs/delete'] = {['suggest']='path',['fileA']=true},
+	['rom/programs/mkdir'] = {['suggest']='path',['fileA']=true},
+	['rom/programs/list'] = {['suggest']='[path]',['fileA']=true},
+	['rom/programs/edit'] = {['suggest']='path',['fileA']=true},
+	['rom/programs/type'] = {['suggest']='path',['fileA']=true},
+	['rom/programs/advanced/paint'] = {['suggest']='path',['fileA']=true},
 	['rom/programs/advanced/bg'] = {['suggest']='program',['restart']=true},
 	['rom/programs/advanced/fg'] = {['suggest']='program',['restart']=true},
 	['rom/programs/shell'] = {['suggest']='[program]',['restart']=true},
@@ -435,7 +435,7 @@ local tSystemArguments={
 	['!lua']={['suggest']="lua code",},
 	['!rlua']={},
 	['!wild']={['suggest']="Wildcard path",},
-	['!cat']={['suggest']="path",['file']=true,['next']={}},
+	['!cat']={['suggest']="path",['fileA']=true,['next']={}},
 	['!find']={['suggest']="Filename to find",},
 }
 tSystemArguments['!cat']['next']=setany(tSystemArguments['!cat'])
@@ -498,9 +498,9 @@ local tSystemFunctions={
 			local path=shell.resolve(k)
 			if not fs.exists(path) then print("File "..k.." don't exists") return end
 			if fs.isDir(path) then print(k.." is a directory") return end
-			local file = fs.open(path, "r")
-			table.insert(out,file.readAll())
-			file.close()
+			local fileA = fs.open(path, "r")
+			table.insert(out,fileA.readAll())
+			fileA.close()
 		end
 		textutils.pagedPrint(table.concat(out))
 	end,
@@ -585,7 +585,7 @@ end
 --if there is 'restart' look for word in arguments and repeat starting process
 
 --when you reach word you need
---if there is an ['file']=true then is simply to start filesystem pathfinding
+--if there is an ['fileA']=true then is simply to start filesystem pathfinding
 --if there is an 'specialArgs' then run it and add result it to args content using sumtab
 --if you are outside of whole table do filesystem tab-complete without programs
 
@@ -608,7 +608,7 @@ local function tabcomplete(sLine,nPos,SpecialMode) --Main tabcomplete
 				else return loopstarter(num,current) end
 			elseif num==current then
 				if tab['specialArgs'] and SpecialMode then tab['args']=tab['specialArgs']() end
-				return ((#tWords[num]==0 and tab['suggest']) or ""),(tab['args'] or {}),false,false,tab['file']
+				return ((#tWords[num]==0 and tab['suggest']) or ""),(tab['args'] or {}),false,false,tab['fileA']
 			elseif tab['next'] then return loop(tab['next'][tWords[num]],num+1,current)
 			else return "",{},false,false,true end
 		end

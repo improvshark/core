@@ -191,6 +191,6 @@ function decode(str)
 end
 
 function decodeFromFile(path)
-	local file = assert(fs.open(path, "r"))
-	return decode(file.readAll())
+	local fileA = assert(fs.open(path, "r"))
+	return decode(fileA.readAll())
 end

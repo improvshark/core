@@ -8,7 +8,7 @@ Direct link: http://pastebin.com/raw.php?i=4nRg9CHU
 
 -- Edit these variables to use preset mode.
 -- Whether to download the files asynchronously (huge speed benefits, will also retry failed files)
--- If false will download the files one by one and use the old output (List each file name as it's downloaded) instead of the progress bar
+-- If false will download the files one by one and use the old output (List each fileA name as it's downloaded) instead of the progress bar
 local async = true
 
 -- Whether to write to the terminal as files are downloaded
@@ -50,19 +50,19 @@ if #args < 2 then
 		print("Usage:\n"..((shell and shell.getRunningProgram()) or "gitget").." <user> <repo> [branch=master] [path=/]") error()
 end
  
-local function save(data,file)
-	local file = shell.resolve(file:gsub("%%20"," "))
-	if not (fs.exists(string.sub(file,1,#file - #fs.getName(file))) and fs.isDir(string.sub(file,1,#file - #fs.getName(file)))) then
-		if fs.exists(string.sub(file,1,#file - #fs.getName(file))) then fs.delete(string.sub(file,1,#file - #fs.getName(file))) end
-		fs.makeDir(string.sub(file,1,#file - #fs.getName(file)))
+local function save(data,fileA)
+	local fileA = shell.resolve(fileA:gsub("%%20"," "))
+	if not (fs.exists(string.sub(fileA,1,#fileA - #fs.getName(fileA))) and fs.isDir(string.sub(fileA,1,#fileA - #fs.getName(fileA)))) then
+		if fs.exists(string.sub(fileA,1,#fileA - #fs.getName(fileA))) then fs.delete(string.sub(fileA,1,#fileA - #fs.getName(fileA))) end
+		fs.makeDir(string.sub(fileA,1,#fileA - #fs.getName(fileA)))
 	end
-	local f = fs.open(file,"w")
+	local f = fs.open(fileA,"w")
 	f.write(data)
 	f.close()
 end
  
-local function download(url, file)
-	save(http.get(url).readAll(),file)
+local function download(url, fileA)
+	save(http.get(url).readAll(),fileA)
 end
 
 if not json then

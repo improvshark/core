@@ -6,9 +6,9 @@ end
 
 function loadConfig(path)
 	if fs.exists(path) then
-		local file = assert(fs.open(path, "r"))
-		temp = json.decode(file.readAll())
-		file.close()
+		local fileA = assert(fs.open(path, "r"))
+		temp = json.decode(fileA.readAll())
+		fileA.close()
 		return temp
 	else
 		return nil
@@ -16,10 +16,10 @@ function loadConfig(path)
 end
 
 function saveConfig(path, obj)
-	local file = assert(fs.open(path,"w"))
+	local fileA = assert(fs.open(path,"w"))
 	string = json.encodePretty(obj)
-	file.write(string)
-	file.close()
+	fileA.write(string)
+	fileA.close()
 end
 
 function addBoot(path)
@@ -82,7 +82,7 @@ end
 --[[
 function loadProgram(path, reqursive)
 	if  fs.exists(path) == false  then
-		print('file or path does not exist')
+		print('fileA or path does not exist')
 		return false
 	end
 
