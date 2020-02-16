@@ -1,7 +1,7 @@
 local coreDir = ''
-shell.setDir(coreDir .. "/home")
+shell.setDir(coreDir .. '/home')
 
--- louding minimum apis.
+-- loading minimum apis.
 os.loadAPI(coreDir .. '/lib/json')
 os.loadAPI(coreDir .. '/lib/core')
 
@@ -9,25 +9,27 @@ local config = core.loadConfig(coreDir .. '/etc/coreConfig');
 
 -- building path
 print('Building Path')
-local path =  shell.path()  .. ':'
+-- local path =  shell.path()  .. ':'
+local path = ''
 for i = 1, #config.path do
 	path = path .. config.path[i]
 	if i ~= #config.path then
-		path = path .. ":"
+		path = path .. ':'
 	end
 end
+path = path .. ':' shell.path()
 shell.setPath(path)
 
 
 -- loading libs.
-print("loading libs")
+print('loading libs')
 for i = 1, #config.lib do
 	print('loading ' .. config.lib[i])
 	os.loadAPI(config.lib[i])
 end
 
 -- loading daemonManager.
-print("loading daemon Manager")
+print('loading daemon Manager')
 if not daemon.isInstalled() then daemon.install() end
 
 -- run boot programs

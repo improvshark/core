@@ -53,8 +53,8 @@ local arg = {...}
 local function main()
 
 	if arg[1] == nil then
-		print("module <list>")
-		print("module <install/update> <module> ")
+		print("apk <list>")
+		print("apk <install/update> <module> ")
   elseif (arg[1] == "install" or arg[1] == "update" or arg[1] == "list") and arg[2] == nil then
     list()
 	elseif arg[1] == "list" then
