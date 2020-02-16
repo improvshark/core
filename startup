@@ -17,7 +17,7 @@ for i = 1, #config.path do
 		path = path .. ':'
 	end
 end
-path = path .. ':' shell.path()
+path = path .. ':' .. shell.path()
 shell.setPath(path)
 
 
