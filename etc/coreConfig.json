@@ -1,17 +1,16 @@
 {
 	"boot": [
-		"/boot/hello",
+		"/boot/hello"
 	],
 	"path": [
 		"/bin",
 		"/usr/bin",
-		"/home/bin",
+		"/home/bin"
 	],
 	"lib": [
 		"/lib/json",
 		"/lib/core",
 		"/lib/daemon",
-		"/lib/filetype",
-		"/lib/yargs",
+		"/lib/filetype"
 	]
 }
