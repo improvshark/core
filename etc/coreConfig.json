@@ -1,16 +1,14 @@
 {
 	"boot": [
-		"/boot/hello"
+		"/boot/hello.lua"
 	],
 	"path": [
 		"/bin",
 		"/usr/bin",
 		"/home/bin"
 	],
-	"lib": [
-		"/lib/json",
-		"/lib/core",
-		"/lib/daemon",
-		"/lib/filetype"
+	"api": [
+		"/api/daemon.lua",
+		"/api/filetype.lua"
 	]
 }

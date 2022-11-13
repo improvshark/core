@@ -4,7 +4,8 @@ Developed by apemanzilla.
  
 This requires ElvishJerricco's JSON parsing API.
 Direct link: http://pastebin.com/raw.php?i=4nRg9CHU
-]]--
+]] --
+local json = require('json')
 
 -- Edit these variables to use preset mode.
 -- Whether to download the files asynchronously (huge speed benefits, will also retry failed files)
@@ -20,18 +21,18 @@ local preset = {
 	user = nil,
 	-- The GitHub repository name
 	repo = nil,
-	
+
 	-- The branch to download (defaults to 'master')
 	branch = nil,
-	
+
 	-- The local folder to save all the files to (defaults to '/')
 	path = nil,
-	
+
 	-- Function to run before starting the download
 	start = function()
 		if not silent then print("Downloading files from GitHub...") end
 	end,
-	
+
 	-- Function to run when the download completes
 	done = function()
 		if not silent then print("Done") end
@@ -39,45 +40,51 @@ local preset = {
 }
 
 -- Leave the rest of the program alone.
-local args = {...}
+local args = { ... }
 
 args[1] = preset.user or args[1]
 args[2] = preset.repo or args[2]
 args[3] = preset.branch or args[3] or "master"
 args[4] = preset.path or args[4] or ""
- 
+
 if #args < 2 then
-		print("Usage:\n"..((shell and shell.getRunningProgram()) or "gitget").." <user> <repo> [branch=master] [path=/]") error()
+	print("Usage:\n" .. ((shell and shell.getRunningProgram()) or "gitget") .. " <user> <repo> [branch=master] [path=/]")
+	error()
 end
- 
-local function save(data,fileA)
-	local fileA = shell.resolve(fileA:gsub("%%20"," "))
-	if not (fs.exists(string.sub(fileA,1,#fileA - #fs.getName(fileA))) and fs.isDir(string.sub(fileA,1,#fileA - #fs.getName(fileA)))) then
-		if fs.exists(string.sub(fileA,1,#fileA - #fs.getName(fileA))) then fs.delete(string.sub(fileA,1,#fileA - #fs.getName(fileA))) end
-		fs.makeDir(string.sub(fileA,1,#fileA - #fs.getName(fileA)))
+
+local function save(data, fileA)
+	local fileA = shell.resolve(fileA:gsub("%%20", " "))
+	if not
+		(
+		fs.exists(string.sub(fileA, 1, #fileA - #fs.getName(fileA))) and
+			fs.isDir(string.sub(fileA, 1, #fileA - #fs.getName(fileA)))) then
+		if fs.exists(string.sub(fileA, 1, #fileA - #fs.getName(fileA))) then fs.delete(string.sub(fileA, 1,
+			#fileA - #fs.getName(fileA))) end
+		fs.makeDir(string.sub(fileA, 1, #fileA - #fs.getName(fileA)))
 	end
-	local f = fs.open(fileA,"w")
+	local f = fs.open(fileA, "w")
 	f.write(data)
 	f.close()
 end
- 
+
 local function download(url, fileA)
-	save(http.get(url).readAll(),fileA)
+	save(http.get(url).readAll(), fileA)
 end
 
 if not json then
-	download("http://pastebin.com/raw.php?i=4nRg9CHU","json")
+	download("http://pastebin.com/raw.php?i=4nRg9CHU", "json")
 	os.loadAPI("json")
 end
- 
+
 preset.start()
-local data = json.decode(http.get("https://api.github.com/repos/"..args[1].."/"..args[2].."/git/trees/"..args[3].."?recursive=1").readAll())
+local data = json.decode(http.get("https://api.github.com/repos/" ..
+	args[1] .. "/" .. args[2] .. "/git/trees/" .. args[3] .. "?recursive=1").readAll())
 if data.message and data.message:find("API rate limit exceeded") then error("Out of API calls, try again later") end
-if data.message and data.message == "Not found" then error("Invalid repository",2) else
-	for k,v in pairs(data.tree) do
+if data.message and data.message == "Not found" then error("Invalid repository", 2) else
+	for k, v in pairs(data.tree) do
 		-- Make directories
 		if v.type == "tree" then
-			fs.makeDir(fs.combine(args[4],v.path))
+			fs.makeDir(fs.combine(args[4], v.path))
 			if not hide_progress then
 			end
 		end
@@ -92,10 +99,10 @@ if data.message and data.message == "Not found" then error("Invalid repository",
 		term.write("]")
 		drawProgress = function(done, max)
 			local value = done / max
-			term.setCursorPos(2,y)
+			term.setCursorPos(2, y)
 			term.write(("="):rep(math.floor(value * (wide - 8))))
 			local percent = math.floor(value * 100) .. "%"
-			term.setCursorPos(wide - percent:len(),y)
+			term.setCursorPos(wide - percent:len(), y)
 			term.write(percent)
 		end
 	end
@@ -103,14 +110,15 @@ if data.message and data.message == "Not found" then error("Invalid repository",
 	local downloaded = 0
 	local paths = {}
 	local failed = {}
-	for k,v in pairs(data.tree) do
+	for k, v in pairs(data.tree) do
 		-- Send all HTTP requests (async)
 		if v.type == "blob" then
-			v.path = v.path:gsub("%s","%%20")
-			local url = "https://raw.github.com/"..args[1].."/"..args[2].."/"..args[3].."/"..v.path,fs.combine(args[4],v.path)
+			v.path = v.path:gsub("%s", "%%20")
+			local url = "https://raw.github.com/" .. args[1] .. "/" .. args[2] .. "/" .. args[3] .. "/" .. v.path,
+				fs.combine(args[4], v.path)
 			if async then
 				http.request(url)
-				paths[url] = fs.combine(args[4],v.path)
+				paths[url] = fs.combine(args[4], v.path)
 				filecount = filecount + 1
 			else
 				download(url, fs.combine(args[4], v.path))
@@ -121,9 +129,9 @@ if data.message and data.message == "Not found" then error("Invalid repository",
 	while downloaded < filecount do
 		local e, a, b = os.pullEvent()
 		if e == "http_success" then
-			save(b.readAll(),paths[a])
+			save(b.readAll(), paths[a])
 			downloaded = downloaded + 1
-			if not silent then drawProgress(downloaded,filecount) end
+			if not silent then drawProgress(downloaded, filecount) end
 		elseif e == "http_failure" then
 			-- Retry in 3 seconds
 			failed[os.startTimer(3)] = a

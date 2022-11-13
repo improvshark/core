@@ -4,25 +4,22 @@ local side = nil
 local protocol = 'remote'
 --
 local function getModem()
-	sides = {"front", "back", "left", "right", "top","bottom"}
+	local sides = { "front", "back", "left", "right", "top", "bottom" }
 	for i = 1, #sides do
-		if peripheral.isPresent(sides[i])==true and tostring(peripheral.getType(sides[i])) == 'modem' then
+		if peripheral.isPresent(sides[i]) == true and tostring(peripheral.getType(sides[i])) == 'modem' then
 			return peripheral.wrap(sides[i]), sides[i]
 		end
 	end
 	return false
 end
 
-
 local function close()
- 	modem.close(channel)
+	modem.close(channel)
 end
-
-
 
 local function list(sleepTime)
 	if sleepTime == nil then sleepTime = 1 end
-	message = {messageType = 'function', message = 'getLabel'}
+	local message = { messageType = 'function', message = 'getLabel' }
 	rednet.broadcast(textutils.serialize(message), protocol)
 	parallel.waitForAny(function() sleep(sleepTime) end, function()
 		while true do
@@ -36,16 +33,16 @@ local function list(sleepTime)
 end
 
 local function getFuel(name, sleepTime)
-	id = {rednet.lookup(protocol, name)}
+	id = { rednet.lookup(protocol, name) }
 	for i = 1, #id do
-		message = {messageType = 'function', message = 'getFuel'}
-		rednet.send(id[i],textutils.serialize(message), protocol)
+		local message = { messageType = 'function', message = 'getFuel' }
+		rednet.send(id[i], textutils.serialize(message), protocol)
 		parallel.waitForAny(function() sleep(sleepTime) end, function()
 			while true do
 				local senderId, message, distance = rednet.receive(protocol)
 				message = textutils.unserialize(message)
 				if message ~= nil and message.fuel ~= nil then
-					print('id: '..id[i]..' fuel: ' .. message.fuel)
+					print('id: ' .. id[i] .. ' fuel: ' .. message.fuel)
 				end
 			end
 		end)
@@ -53,14 +50,14 @@ local function getFuel(name, sleepTime)
 end
 
 local function command(myArgs)
-	id = {rednet.lookup(protocol, myArgs[2])}
-	commandArgs = ""
+	local id = { rednet.lookup(protocol, myArgs[2]) }
+	local commandArgs = ""
 	for i = 3, #myArgs do
 		commandArgs = commandArgs .. " " .. myArgs[i]
 	end
 	for i = 1, #id do
-		message = {messageType = 'command', command = commandArgs}
-		rednet.send(id[i],textutils.serialize(message), protocol)
+		message = { messageType = 'command', command = commandArgs }
+		rednet.send(id[i], textutils.serialize(message), protocol)
 		parallel.waitForAny(function() sleep(1) end, function()
 			while true do
 				local senderId, message, distance = rednet.receive(protocol)
@@ -72,11 +69,11 @@ local function command(myArgs)
 	end
 end
 
-local arg = {...}
+local arg = { ... }
 
 local function main()
 	-- modem setup
-	modem , side = getModem()
+	local modem, side = assert(getModem())
 	if modem == false then
 		print('no modem found!')
 		return
@@ -92,11 +89,11 @@ local function main()
 	end
 
 	-- handle command
-	
+
 	if arg[1] == 'list' then
 		list(tonumber(arg[2]))
 	elseif arg[1] == 'fuel' and arg[2] ~= nill then
-		getFuel(arg[2], tonumber(arg[3]) ) 
+		getFuel(arg[2], tonumber(arg[3]))
 	elseif arg[1] == 'command' or arg[1] == 'cmd' and arg[2] ~= nill then
 		command(arg)
 	end
@@ -105,9 +102,3 @@ local function main()
 end
 
 main()
-
-
-
-
-
-
