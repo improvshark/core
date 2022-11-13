@@ -1,4 +1,5 @@
 local core = require('core')
+local argparse = require("argparse")
 local tmpDir = core.coreDir() .. '/modules'
 local moduleList = core.loadConfig(core.coreDir() .. '/etc/moduleList.json')
 
@@ -51,20 +52,18 @@ end
 local arg = { ... }
 
 local function main()
+	local parser = argparse("apk", "core package manager")
+	parser:command("list")
+	parser:command("install"):argument('module')
+	parser:command("update"):argument('module')
+	local args = parser:parse(arg)
 
-	if arg[1] == nil then
-		print("apk <list>")
-		print("apk <install/update> <module> ")
-	elseif (arg[1] == "install" or arg[1] == "update" or arg[1] == "list") and arg[2] == nil then
+	if args['list'] then
 		list()
-	elseif arg[1] == "list" then
-		list()
-	elseif (arg[1] == "install" or arg[1] == "update") and arg[2] ~= nil then
-		if not install(arg[2]) then
-			print('cant find: ' .. arg[2])
+	elseif args['install'] or args['update'] then
+		if not install(args[2]) then
+			error('cant find: ' .. arg[2])
 		end
-	else
-		print('bad arguments')
 	end
 end
 
