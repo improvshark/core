@@ -10,10 +10,6 @@ shell.setDir(coreDir .. '/home')
 local core = require('core')
 local config = core.config();
 
--- use shell clone
-shell.exit()
-os.run(_ENV, fs.combine(coreDir, '/bin/shell.lua'))
-
 -- set shell path
 shell.setPath(core.path() .. ':' .. shell.path())
 
@@ -32,7 +28,10 @@ if not daemon.isInstalled() then daemon.install() end
 -- run boot programs
 if config.boot ~= nil then
 	for i = 1, #config.boot do
-		print('prog:', fs.combine(coreDir, config.boot[i]))
 		shell.run('/' .. fs.combine(coreDir, config.boot[i]))
 	end
 end
+
+-- use shell clone
+shell.exit()
+os.run(_ENV, fs.combine(coreDir, '/bin/shell.lua'))
