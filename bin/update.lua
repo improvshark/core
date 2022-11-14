@@ -1,7 +1,10 @@
+local core = require('core')
+
 local function main()
+	local installDir = '/' .. core.coreDir()
 	currentDir = shell.dir()
-	shell.setDir('/')
-	shell.run('gitget', 'improvshark', 'core', 'master', '/')
+	shell.setDir(installDir)
+	shell.run('gitget', 'improvshark', 'core', 'master', installDir)
 	shell.setDir(currentDir)
 end
 
