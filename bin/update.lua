@@ -1,10 +1,11 @@
 local core = require('core')
 
 local function main()
+	local updateChannel = core.config().updateChannel or 'master'
 	local installDir = '/' .. core.coreDir()
-	currentDir = shell.dir()
-	shell.setDir(installDir)
-	shell.run('gitget', 'improvshark', 'core', 'master', installDir)
+	local currentDir = shell.dir()
+	shell.setDir('/')
+	shell.run('gitget', 'improvshark', 'core', updateChannel, installDir)
 	shell.setDir(currentDir)
 end
 

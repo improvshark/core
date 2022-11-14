@@ -1,4 +1,5 @@
 {
+	"updateChannel": "master",
 	"boot": [
 		"/boot/hello.lua"
 	],
