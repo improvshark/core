@@ -61,7 +61,7 @@ local function main()
 	if args['list'] then
 		list()
 	elseif args['install'] or args['update'] then
-		if not install(args[2]) then
+		if not install(args['module']) then
 			error('cant find: ' .. arg[2])
 		end
 	end

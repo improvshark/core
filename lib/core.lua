@@ -9,6 +9,10 @@ local function coreDir()
 	return baseDir
 end
 
+local function coreConfigPath()
+	return fs.combine(coreDir(), '/etc/coreConfig.json')
+end
+
 ---Load a config file at the specified path
 ---@param path string
 ---@return string
@@ -31,6 +35,7 @@ local function saveConfig(path, obj)
 	local string = json.encodePretty(obj)
 	fileA.write(string)
 	fileA.close()
+	return true
 end
 
 ---get and set core config
@@ -38,7 +43,7 @@ end
 ---@return string|boolean
 local function config(table)
 	expect(1, table, 'nil', 'table')
-	local configPath = fs.combine(coreDir(), '/etc/coreConfig.json')
+	local configPath = coreConfigPath()
 	if table == nil then
 		return loadConfig(configPath)
 	end
@@ -47,56 +52,56 @@ end
 
 local function addBoot(path)
 	expect(1, path, 'string')
-	local userConfig = loadConfig(coreDir() .. '/etc/coreConfig')
+	local userConfig = config()
 	if userConfig.boot == nil then userConfig.boot = {} end
 	table.insert(userConfig.boot, path)
-	saveConfig(coreDir() .. '/etc/coreConfig', userConfig)
+	config(userConfig)
 end
 
 local function removeBoot(path)
 	expect(1, path, 'string')
-	local userConfig = loadConfig(coreDir() .. '/etc/coreConfig')
+	local userConfig = config()
 	if userConfig.boot == nil then userConfig.boot = {} end
 	for i = 1, #userConfig.boot do
 		if userConfig.boot[i] == path then table.remove(userConfig.boot, i) end
 	end
-	saveConfig(coreDir() .. '/etc/coreConfig', userConfig)
+	config(userConfig)
 end
 
 local function addLib(path)
 	expect(1, path, 'string')
-	local userConfig = loadConfig(coreDir() .. '/etc/coreConfig')
+	local userConfig = config()
 	if userConfig.lib == nil then userConfig.lib = {} end
 	table.insert(userConfig.lib, path)
-	saveConfig(coreDir() .. '/etc/coreConfig', userConfig)
+	config(userConfig)
 end
 
 local function removeLib(path)
 	expect(1, path, 'string')
-	local userConfig = loadConfig(coreDir() .. '/etc/coreConfig')
+	local userConfig = config()
 	if userConfig.lib == nil then userConfig.lib = {} end
 	for i = 1, #userConfig.lib do
 		if userConfig.lib[i] == path then table.remove(userConfig.lib, i) end
 	end
-	saveConfig(coreDir() .. '/etc/coreConfig', userConfig)
+	config(userConfig)
 end
 
 local function addPath(path)
 	expect(1, path, 'string')
-	local userConfig = loadConfig(coreDir() .. '/etc/coreConfig')
+	local userConfig = config()
 	if userConfig.path == nil then userConfig.path = {} end
 	table.insert(userConfig.path, path)
-	saveConfig(coreDir() .. '/etc/coreConfig', userConfig)
+	config(userConfig)
 end
 
 local function removePath(path)
 	expect(1, path, 'string')
-	local userConfig = loadConfig(coreDir() .. '/etc/coreConfig')
+	local userConfig = config()
 	if userConfig.path == nil then userConfig.path = {} end
 	for i = 1, #userConfig.path do
 		if userConfig.path[i] == path then table.remove(userConfig.path, i) end
 	end
-	saveConfig(coreDir() .. '/etc/coreConfig', userConfig)
+	config(userConfig)
 end
 
 local function path()
