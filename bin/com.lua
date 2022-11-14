@@ -49,11 +49,11 @@ local function getFuel(name, sleepTime)
 	end
 end
 
-local function command(myArgs)
-	local id = { rednet.lookup(protocol, myArgs[2]) }
+local function sendCommand(name, arguments)
+	local id = { rednet.lookup(protocol, name) }
 	local commandArgs = ""
-	for i = 3, #myArgs do
-		commandArgs = commandArgs .. " " .. myArgs[i]
+	for i = 1, #arguments do
+		commandArgs = commandArgs .. " " .. arguments[i]
 	end
 	for i = 1, #id do
 		message = { messageType = 'command', command = commandArgs }
@@ -89,13 +89,24 @@ local function main()
 	end
 
 	-- handle command
+	argparse = require('argparse')
+	local parser = argparse("apk", "core package manager")
+	parser:option('-s --sleep')
+	parser:command("list")
+	parser:command("fuel"):argument('name')
+	local command = parser:command("command cmd")
+	command:argument('name')
+	command:argument('message'):args('*')
 
-	if arg[1] == 'list' then
-		list(tonumber(arg[2]))
-	elseif arg[1] == 'fuel' and arg[2] ~= nill then
-		getFuel(arg[2], tonumber(arg[3]))
-	elseif arg[1] == 'command' or arg[1] == 'cmd' and arg[2] ~= nill then
-		command(arg)
+	local args = parser:parse(arg)
+	local sleep = args['sleep'] or 1
+
+	if args['list'] then
+		list(sleep)
+	elseif args['fuel'] then
+		getFuel(args['name'], sleep)
+	elseif args['command'] then
+		sendCommand(args['name'], args['message'])
 	end
 
 	close()
