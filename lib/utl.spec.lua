@@ -25,6 +25,13 @@ local suite = {
 		utl.insertDotNotation(myTable, 'foo.bar', 1)
 		assert(myTable['foo']['bar'] == 1, 'failed to insert')
 	end,
+	-- test inserts at level two adjacent
+	function()
+		local myTable = { foo={baz=1}}
+		utl.insertDotNotation(myTable, 'foo.bar', 1)
+		assert(myTable['foo']['bar'] == 1, 'failed to insert')
+		assert(myTable['foo']['baz'] == 1, 'failed to insert')
+	end,
 	-- test remove at level one 
 	function()
 		local myTable = { foo=1}
