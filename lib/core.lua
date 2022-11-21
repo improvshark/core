@@ -29,6 +29,10 @@ local function loadConfig(path)
 	end
 end
 
+---Save given object as a config file
+---@param path string
+---@param obj table
+---@return boolean
 local function saveConfig(path, obj)
 	expect(1, path, 'string')
 	expect(2, obj, 'table')
@@ -41,14 +45,15 @@ end
 
 ---get and set core config
 ---@param table any
----@return string|boolean
+---@return table
 local function config(table)
 	expect(1, table, 'nil', 'table')
 	local configPath = coreConfigPath()
 	if table == nil then
 		return loadConfig(configPath)
 	end
-	return assert(saveConfig(configPath, table))
+	assert(saveConfig(configPath, table))
+	return configPath
 end
 
 local function addBoot(path)
