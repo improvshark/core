@@ -1,6 +1,5 @@
 local core = require('core')
 local argparse = require("argparse")
-local tmpDir = core.coreDir() .. '/modules'
 local moduleList = core.loadConfig(core.coreDir() .. '/etc/moduleList.json')
 
 local function list(...)
@@ -13,9 +12,9 @@ local function install(name)
 	if name == nil then return false end
 	for key, value in pairs(moduleList) do
 		if name == tostring(key) then
-			currentDir = shell.dir()
+			local currentDir = shell.dir()
 			shell.setDir('/')
-			installPath = core.coreDir() .. '/usr/' .. tostring(key)
+			local installPath = core.coreDir() .. '/usr/' .. tostring(key)
 			print('tmp Path: ' .. installPath)
 			print('working dir: ' .. currentDir)
 			if shell.run('gitget', value.githubAccount, value.githubName, value.githubBranch, installPath) then
@@ -23,7 +22,7 @@ local function install(name)
 				if fs.exists(installPath .. '/apis') then
 					local files = fs.list(installPath .. '/apis')
 					for i = 1, #files do
-						core.addLib(installPath .. '/apis/' .. files[i])
+						core.addApi(installPath .. '/apis/' .. files[i])
 					end
 				end
 
@@ -54,7 +53,7 @@ local arg = { ... }
 local function main()
 	local parser = argparse("apk", "core package manager")
 	parser:command("list")
-	parser:command("install"):argument('module')
+	parser:command("install add"):argument('module')
 	parser:command("update"):argument('module')
 	local args = parser:parse(arg)
 

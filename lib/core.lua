@@ -1,5 +1,6 @@
 local expect = require("cc.expect").expect
 local json = require("json")
+local utl = require("utl")
 
 local currentPath = string.sub(debug.getinfo(1).source, 2)
 local baseDir = fs.getDir(fs.getDir(currentPath))
@@ -15,7 +16,7 @@ end
 
 ---Load a config file at the specified path
 ---@param path string
----@return string
+---@return table
 local function loadConfig(path)
 	expect(1, path, 'string')
 	if fs.exists(path) then
@@ -64,6 +65,33 @@ local function removeBoot(path)
 	if userConfig.boot == nil then userConfig.boot = {} end
 	for i = 1, #userConfig.boot do
 		if userConfig.boot[i] == path then table.remove(userConfig.boot, i) end
+	end
+	config(userConfig)
+end
+
+---Set a core config
+---@param key string
+---@param value string|boolean|number|table
+local function setConfig(key, value)
+	local userConfig = config()
+	utl.insertDotNotation(userConfig, key, value)
+	config(userConfig)
+end
+
+local function addApi(path)
+	expect(1, path, 'string')
+	local userConfig = config()
+	if userConfig.api == nil then userConfig.api = {} end
+	table.insert(userConfig.api, path)
+	config(userConfig)
+end
+
+local function removeApi(path)
+	expect(1, path, 'string')
+	local userConfig = config()
+	if userConfig.api == nil then userConfig.api = {} end
+	for i = 1, #userConfig.api do
+		if userConfig.api[i] == path then table.remove(userConfig.api, i) end
 	end
 	config(userConfig)
 end
@@ -119,10 +147,13 @@ end
 return {
 	coreDir = coreDir,
 	config = config,
+	setConfig = setConfig,
 	loadConfig = loadConfig,
 	saveConfig = saveConfig,
 	addBoot = addBoot,
 	removeBoot = removeBoot,
+	addApi = addApi,
+	removeApi = removeApi,
 	addLib = addLib,
 	removeLib = removeLib,
 	path = path,
