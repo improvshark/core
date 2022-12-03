@@ -4,6 +4,9 @@ local utl = require("utl")
 
 local currentPath = string.sub(debug.getinfo(1).source, 2)
 local baseDir = fs.getDir(fs.getDir(currentPath))
+if baseDir == ".." then
+	baseDir = ""
+end
 
 
 local function coreDir()

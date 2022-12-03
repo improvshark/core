@@ -1,6 +1,7 @@
 local currentPath = string.sub(debug.getinfo(1).source, 2)
 local coreDir = fs.getDir(currentPath)
-package.path = '/' .. coreDir .. '/lib/?.lua;' .. package.path
+-- package.path = '/' .. coreDir .. '/lib/?.lua;' .. package.path
+package.path = '/lib/?.lua;' .. package.path
 
 local homeDir = fs.combine(coreDir, '/home')
 if not fs.isDir(homeDir) then fs.makeDir(homeDir) end
